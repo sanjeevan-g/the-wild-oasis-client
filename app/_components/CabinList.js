@@ -5,7 +5,7 @@ import { connection } from "next/server";
 
 // component level use noStore, revalidate work only in page level
 
-async function CabinList() {
+async function CabinList({ filter }) {
   // noStore(); // depricated in next js 15
   // connection(); // use connection instead on noStore
 
@@ -13,9 +13,31 @@ async function CabinList() {
 
   if (!cabins.length) return null;
 
+  let displayedCabins;
+
+  switch (filter) {
+    case "all":
+      displayedCabins = cabins;
+      break;
+    case "small":
+      displayedCabins = cabins.filter((cabin) => cabin.maxCapacity <= 3);
+      break;
+    case "medium":
+      displayedCabins = cabins.filter(
+        (cabin) => cabin.maxCapacity >= 4 && cabin.maxCapacity <= 7
+      );
+      break;
+    case "large":
+      displayedCabins = cabins.filter((cabin) => cabin.maxCapacity >= 8);
+      break;
+
+    default:
+      break;
+  }
+
   return (
     <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 xl:gap-14">
-      {cabins.map((cabin) => (
+      {displayedCabins.map((cabin) => (
         <CabinCard cabin={cabin} key={cabin.id} />
       ))}
     </div>

@@ -1,4 +1,6 @@
 import SelectCountry from "@/app/_components/SelectCountry";
+import Spinner from "@/app/_components/Spinner";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Update Profile",
@@ -47,12 +49,14 @@ export default function Page() {
             /> */}
           </div>
 
-          <SelectCountry
-            name="nationality"
-            id="nationality"
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
-            defaultCountry={nationality}
-          />
+          <Suspense fallback={<Spinner />}>
+            <SelectCountry
+              name="nationality"
+              id="nationality"
+              className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
+              defaultCountry={nationality}
+            />
+          </Suspense>
         </div>
 
         <div className="space-y-2">
