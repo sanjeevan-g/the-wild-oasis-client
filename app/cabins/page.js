@@ -4,19 +4,16 @@ import Spinner from "../_components/Spinner";
 import Filter from "../_components/Filter";
 import ReservationReminder from "../_components/ReservationReminder";
 
-// page level
-export const revalidate = 3600; // once per hour
-// page will be revalidated only if a user visit this page after revalidate sec
-// then page will be generated and changes are visible after 2nd refresh or to 2nd user
+export const revalidate = 3600;
 
 export const metadata = {
   title: "Cabins",
 };
 
 export default async function Page({ searchParams }) {
-  // CHANGE
-  const data = await searchParams;
-  const filter = data?.capacity ?? "all";
+  const {capacity} = await searchParams;
+
+  const filter = capacity ?? "all";
 
   return (
     <div>
@@ -31,14 +28,11 @@ export default async function Page({ searchParams }) {
         home away from home. The perfect spot for a peaceful, calm vacation.
         Welcome to paradise.
       </p>
-      <div className="flex justify-end mb-8 ">
+
+      <div className="flex justify-end mb-8">
         <Filter />
       </div>
-      {/* addingkey to suspense, when key changes the component will remount,
-      in nextjs, navigation are build in react transition. use suspense won't hide prev data untill transition is done
-      but updating the key will make the suspense to remount
-      
-      */}
+
       <Suspense fallback={<Spinner />} key={filter}>
         <CabinList filter={filter} />
         <ReservationReminder />

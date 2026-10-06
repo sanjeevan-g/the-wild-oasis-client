@@ -1,5 +1,6 @@
 import { eachDayOfInterval } from "date-fns";
-import { supabase } from "./supabase";
+
+import supabase from "./supabase";
 import { notFound } from "next/navigation";
 
 /////////////
@@ -108,6 +109,9 @@ export async function getBookedDatesByCabinId(cabinId) {
     .eq("cabinId", cabinId)
     .or(`startDate.gte.${today},status.eq.checked-in`);
 
+  // For testing
+  // await new Promise((res) => setTimeout(res, 2000));
+
   if (error) {
     console.error(error);
     throw new Error("Bookings could not get loaded");
@@ -133,6 +137,9 @@ export async function getSettings() {
     console.error(error);
     throw new Error("Settings could not be loaded");
   }
+  
+  // For testing
+  // await new Promise((res) => setTimeout(res, 3000));
 
   return data;
 }

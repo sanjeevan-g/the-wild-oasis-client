@@ -1,6 +1,11 @@
 "use client";
 
-import { isWithinInterval } from "date-fns";
+import {
+  differenceInDays,
+  isPast,
+  isSameDay,
+  isWithinInterval,
+} from "date-fns";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { useReservation } from "./ReservationContext";
@@ -10,26 +15,22 @@ function isAlreadyBooked(range, datesArr) {
     range.from &&
     range.to &&
     datesArr.some((date) =>
-      isWithinInterval(date, { start: range.from, end: range.to }),
+      isWithinInterval(date, { start: range.from, end: range.to })
     )
   );
 }
 
-function DateSelector({ settings, cabin, bookedDates }) {
+function DateSelector({ settings, bookedDates, cabin }) {
   const { range, setRange, resetRange } = useReservation();
-
-  // CHANGE
-  const regularPrice = 23;
-  const discount = 23;
-  const numNights = 23;
-  const cabinPrice = 23;
 
   // SETTINGS
   const { minBookingLength, maxBookingLength } = settings;
 
-  const handleSelect = (selectedRange) => {
-    setRange((prev) => ({ ...prev, ...selectedRange }));
-  };
+  const { regularPrice, discount } = cabin;
+  const numNights = differenceInDays(range.to, range.from);
+  const cabinPrice = numNights * (regularPrice - discount);
+
+  const displayRange = isAlreadyBooked(range, bookedDates) ? {} : range;
 
   return (
     <div className="flex flex-col justify-between">
@@ -38,13 +39,17 @@ function DateSelector({ settings, cabin, bookedDates }) {
         mode="range"
         min={minBookingLength + 1}
         max={maxBookingLength}
-        selected={range}
-        onSelect={handleSelect}
-        startMonth={new Date()}
-        startDate={new Date()}
-        endMonth={new Date(new Date().getFullYear() + 5, 11)} // December of the year 5 years from now
+        fromMonth={new Date()}
+        fromDate={new Date()}
+        toYear={new Date().getFullYear() + 5}
         captionLayout="dropdown"
         numberOfMonths={2}
+        selected={displayRange}
+        onSelect={setRange}
+        disabled={(curDate) =>
+          isPast(curDate) ||
+          bookedDates.some((date) => isSameDay(date, curDate))
+        }
       />
 
       <div className="flex items-center justify-between px-8 bg-accent-500 text-primary-800 h-[72px]">

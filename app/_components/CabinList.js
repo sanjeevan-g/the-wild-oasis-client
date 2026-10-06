@@ -1,43 +1,32 @@
-import { unstable_noStore as noStore } from "next/cache";
-import { getCabins } from "../_lib/data-service";
 import CabinCard from "./CabinCard";
-import { connection } from "next/server";
-
-// component level use noStore, revalidate work only in page level
+import { getCabins } from "../_lib/data-service";
+import { unstable_noStore as noStore } from "next/cache";
 
 async function CabinList({ filter }) {
-  // noStore(); // depricated in next js 15
-  // connection(); // use connection instead on noStore
+  noStore();
 
   const cabins = await getCabins();
 
   if (!cabins.length) return null;
 
-  let displayedCabins;
-
-  switch (filter) {
-    case "all":
-      displayedCabins = cabins;
-      break;
-    case "small":
-      displayedCabins = cabins.filter((cabin) => cabin.maxCapacity <= 3);
-      break;
-    case "medium":
-      displayedCabins = cabins.filter(
-        (cabin) => cabin.maxCapacity >= 4 && cabin.maxCapacity <= 7
-      );
-      break;
-    case "large":
-      displayedCabins = cabins.filter((cabin) => cabin.maxCapacity >= 8);
-      break;
-
-    default:
-      break;
-  }
+  const filteredCabins =
+    filter === "small"
+      ? cabins.filter(
+          (cabin) => cabin.maxCapacity >= 2 && cabin.maxCapacity < 4
+        )
+      : filter === "medium"
+      ? cabins.filter(
+          (cabin) => cabin.maxCapacity >= 4 && cabin.maxCapacity < 7
+        )
+      : filter === "large"
+      ? cabins.filter(
+          (cabin) => cabin.maxCapacity >= 7 && cabin.maxCapacity <= 10
+        )
+      : cabins;
 
   return (
     <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 xl:gap-14">
-      {displayedCabins.map((cabin) => (
+      {filteredCabins.map((cabin) => (
         <CabinCard cabin={cabin} key={cabin.id} />
       ))}
     </div>

@@ -1,25 +1,16 @@
 import Cabin from "@/app/_components/Cabin";
 import Reservation from "@/app/_components/Reservation";
 import Spinner from "@/app/_components/Spinner";
-import { getCabin, getCabins } from "@/app/_lib/data-service";
+import { getCabin } from "@/app/_lib/data-service";
 import { Suspense } from "react";
-
-// dynamic metadata
 
 export async function generateMetadata({ params }) {
   const { cabinId } = await params;
-  const { name } = await getCabin(cabinId);
-  return {
-    title: `Cabin ${name}`,
-  };
-}
+  const cabin = await getCabin(cabinId);
 
-export async function generateStaticParams() {
-  const cabins = await getCabins();
+  const { name } = cabin;
 
-  const ids = cabins.map((cabin) => ({ cabinId: cabin.id.toString() }));
-
-  return ids;
+  return { title: `Cabin ${name}` };
 }
 
 export default async function Page({ params }) {
