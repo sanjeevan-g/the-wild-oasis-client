@@ -45,7 +45,7 @@ export async function deleteBooking(bookingId) {
   if (!session) throw new Error("You must be logged in.");
 
   const guestBookingIDs = (await getBookings(session.user.guestId)).map(
-    (booking) => booking.id
+    (booking) => booking.id,
   );
 
   if (!guestBookingIDs.includes(bookingId))
@@ -69,7 +69,7 @@ export async function updateBooking(formData) {
   const bookingId = Number(formData.get("bookingId"));
 
   const guestBookingIDs = (await getBookings(session.user.guestId)).map(
-    (booking) => booking.id
+    (booking) => booking.id,
   );
 
   if (!guestBookingIDs.includes(bookingId))

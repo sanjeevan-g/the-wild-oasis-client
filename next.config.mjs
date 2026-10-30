@@ -2,9 +2,11 @@
 const nextConfig = {
   images: {
     remotePatterns: [
-      new URL(
-        "https://rowgrkgkfczqrdjbrwmc.supabase.co/storage/v1/object/public/cabin-images/**",
-      ),
+      {
+        protocol: "https",
+        hostname: "rowgrkgkfczqrdjbrwmc.supabase.co",
+        pathname: "/storage/v1/object/public/cabin-images/**",
+      },
     ],
   },
 };
